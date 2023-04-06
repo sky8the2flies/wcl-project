@@ -31,7 +31,7 @@ export default async function handler(
 
   const baseUrl = "https://classic.warcraftlogs.com:443/v1/";
   const wowheadBaseUrl = "https://wowhead.com/wotlk/item=";
-  const apiKey = "e39f935ea2c45fff5c6505f1c84a87e1";
+  const apiKey = "API_KEY";
   body.reports.forEach(async (report) => {
     const logID = report.id;
     const apiKeyString = `?translate=true&api_key=${apiKey}`;
