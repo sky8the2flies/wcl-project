@@ -29,20 +29,22 @@ export default async function handler(
     };
   } = req;
 
-  const baseUrl = "https://classic.warcraftlogs.com:443/v1/";
-  const wowheadBaseUrl = "https://wowhead.com/wotlk/item=";
-  const apiKey = "e39f935ea2c45fff5c6505f1c84a87e1";
+  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+  const baseUrl = process.env.NEXT_PUBLIC_WCL_BASE_URL;
+  const wowheadBaseUrl = process.env.NEXT_PUBLIC_WOWHEAD_BASE_URL;
+
   body.reports.forEach(async (report) => {
     const logID = report.id;
-    const apiKeyString = `?translate=true&api_key=${apiKey}`;
+    const apiKeyString = `?translate=true&NEXT_PUBLIC_API_KEY=${apiKey}`;
     const urlAllPlayers = `${baseUrl}report/tables/casts/${logID}${apiKeyString}&start=0&end=999999999999`;
     const urlAllFights = `${baseUrl}report/fights/${logID}${apiKeyString}`;
     const urlAllZones = `${baseUrl}zones${apiKeyString}`;
     const allFights = await axios.get(urlAllFights);
     const allZones = await axios.get(urlAllZones);
     const allPlayers = await axios.get(urlAllPlayers);
+
+    // console.log("allPlayers", allPlayers.data.entries[0]);
   });
 
-  // console.log("allZones", allZones.data);
   res.status(200).json({ name: "John Doe" });
 }

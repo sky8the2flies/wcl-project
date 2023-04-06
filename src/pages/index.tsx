@@ -255,7 +255,7 @@ export default function Home() {
     setReportsPage(1);
     setSelectedReports([]);
     const { data } = await axios.get(
-      `https://classic.warcraftlogs.com:443/v1/reports/guild/${guildName}/${serverSlug}/${region}?api_key=API_KEY`
+      `https://classic.warcraftlogs.com:443/v1/reports/guild/${guildName}/${serverSlug}/${region}?api_key=${process.env.NEXT_PUBLIC_API_KEY}`
     );
     setReports({ data, loading: false });
   }, 1000);
