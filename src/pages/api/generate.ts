@@ -11,21 +11,14 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   if (req.method !== "POST") {
-    res.setHeader("Allow", ["GET", "PUT"]);
+    res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
   const {
     body,
   }: {
     body: {
-      reports: {
-        id: string;
-        title: string;
-        owner: string;
-        start: number;
-        end: number;
-        zone: number;
-      }[];
+      reports: string[];
     };
   } = req;
 
@@ -34,8 +27,8 @@ export default async function handler(
   const wowheadBaseUrl = process.env.NEXT_PUBLIC_WOWHEAD_BASE_URL;
 
   body.reports.forEach(async (report) => {
-    const logID = report.id;
-    const apiKeyString = `?translate=true&NEXT_PUBLIC_API_KEY=${apiKey}`;
+    const logID = report;
+    const apiKeyString = `?translate=true&api_key=${apiKey}`;
     const urlAllPlayers = `${baseUrl}report/tables/casts/${logID}${apiKeyString}&start=0&end=999999999999`;
     const urlAllFights = `${baseUrl}report/fights/${logID}${apiKeyString}`;
     const urlAllZones = `${baseUrl}zones${apiKeyString}`;
