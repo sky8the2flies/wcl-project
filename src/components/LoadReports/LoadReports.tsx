@@ -15,7 +15,8 @@ export const LoadReports = () => {
       </Tabs.Panel>
 
       <Tabs.Panel value="manual-reports" pt="xs">
-        <ManualReports />
+        {/* <ManualReports /> */}
+        TODO
       </Tabs.Panel>
     </Tabs>
   );

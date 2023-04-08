@@ -6,6 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { ReportsTable } from "./ReportsTable/ReportsTable";
 import { TableSkeleton } from "./TableSkeleton/TableSkeleton";
+import Link from "next/link";
 
 type FormProps = {
   region: "US" | "EU";
@@ -67,7 +68,22 @@ export const FindReports = () => {
       </form>
       <Space h="sm" />
       {loadingReports && <TableSkeleton />}
-      {reports.length > 0 && <ReportsTable reports={reports} />}
+      {reports.length > 0 && (
+        <>
+          <ReportsTable reports={reports} />
+          <Link
+            href={{
+              pathname: `/${debRegion}/${debServerSlug}/${debGuildName.replaceAll(
+                " ",
+                "%20"
+              )}`,
+              query: {},
+            }}
+          >
+            Generate Data
+          </Link>
+        </>
+      )}
     </>
   );
 };
