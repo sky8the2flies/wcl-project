@@ -11,7 +11,9 @@ export const Navigation = () => {
       })}
     >
       <Flex justify="flex-end">
-        <Link href="/">HOME</Link>
+        <Link href="/">
+          <Button style={{ borderRadius: 0 }}>HOME</Button>
+        </Link>
       </Flex>
     </Container>
   );
