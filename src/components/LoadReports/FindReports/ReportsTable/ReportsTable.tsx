@@ -1,5 +1,16 @@
+import {
+  Button,
+  Checkbox,
+  Flex,
+  Pagination,
+  Space,
+  Table,
+} from "@mantine/core";
+import moment from "moment";
 import { useState } from "react";
 import _ from "lodash";
+import axios from "axios";
+import Link from "next/link";
 
 type Report = {
   id: string;
@@ -16,11 +27,10 @@ export const ReportsTable = ({ reports }: { reports: Report[] }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [selectedReports, setSelectedReports] = useState<string[]>([]);
-  const [datePickerValue, setDatePickerValue] = useState<Date[]>([]);
 
   return (
     <>
-      {/* <Table striped withColumnBorders>
+      <Table striped withColumnBorders>
         <thead>
           <tr>
             <th>Select</th>
@@ -61,7 +71,7 @@ export const ReportsTable = ({ reports }: { reports: Report[] }) => {
         onChange={setCurrentPage}
         total={Math.ceil(reports.length / MAX_REPORTS_PAGE)}
       />
-      <Flex justify="flex-end" align="center">
+      {/* <Flex justify="flex-end" align="center">
         <Button
           disabled={selectedReports.length <= 0}
           onClick={async () => {
@@ -72,6 +82,7 @@ export const ReportsTable = ({ reports }: { reports: Report[] }) => {
         >
           Generate Data
         </Button>
+   
       </Flex> */}
     </>
   );

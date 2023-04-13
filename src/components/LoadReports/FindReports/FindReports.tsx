@@ -1,80 +1,42 @@
 import { regionDataSet, serverDataSet } from "@/data/WoWServerData";
-import {
-  Button,
-  Flex,
-  Loader,
-  MultiSelect,
-  NativeSelect,
-  Space,
-  TextInput,
-} from "@mantine/core";
+import { NativeSelect, Space, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDebouncedValue } from "@mantine/hooks";
 import axios from "axios";
-import { forwardRef, useEffect, useState } from "react";
-import { resolve } from "../../../helpers/functions";
+import { useEffect, useState } from "react";
+import { ReportsTable } from "./ReportsTable/ReportsTable";
+import { TableSkeleton } from "./TableSkeleton/TableSkeleton";
 import Link from "next/link";
-import { Raid } from "@/types/raid";
-import { useRaids } from "@/context/RaidContext";
 
 type FormProps = {
   region: "US" | "EU";
   serverSlug: string;
   guildName: string;
-  zones: Raid[];
-};
-
-type MultiSelectRaid = {
-  label: string;
-  value: string;
-  group: string;
 };
 
 export const FindReports = () => {
+  const [reports, setReports] = useState([]);
+  const [loadingReports, setLoadingReports] = useState(false);
   const form = useForm<FormProps>({
-    initialValues: {
-      region: "US",
-      serverSlug: "whitemane",
-      guildName: "",
-      zones: [],
-    },
+    initialValues: { region: "US", serverSlug: "whitemane", guildName: "" },
   });
 
-  const { state: raidsState } = useRaids();
-
-  const [isValidSelection, setIsValidSelection] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [availableRaids, setAvailableRaids] = useState<MultiSelectRaid[]>([]);
-
-  const [debGuildName] = useDebouncedValue(form.values.guildName, 500);
-  const [debRegion] = useDebouncedValue(form.values.region, 200);
-  const [debServerSlug] = useDebouncedValue(form.values.serverSlug, 200);
-
-  useEffect(() => {
-    setIsValidSelection(false);
-  }, [form.values.region, form.values.serverSlug, form.values.guildName]);
+  const [debGuildName] = useDebouncedValue(form.values.guildName, 800);
+  const [debRegion] = useDebouncedValue(form.values.region, 800);
+  const [debServerSlug] = useDebouncedValue(form.values.serverSlug, 800);
 
   useEffect(() => {
     if (!debGuildName || !debRegion || !debServerSlug) return;
-    setIsLoading(true);
     const fetchData = async () => {
-      const { error } = await resolve(
-        axios.post("/api/reports", {
-          region: debRegion,
-          guildName: debGuildName,
-          serverSlug: debServerSlug,
-        })
-      );
-      setIsLoading(false);
-      if (error != null) {
-        form.setFieldError(
-          "guildName",
-          "Unable to find guild in region and server"
-        );
-        return;
-      }
-      setIsValidSelection(true);
+      const { data } = await axios.post("/api/findReports", {
+        region: debRegion,
+        guildName: debGuildName,
+        serverSlug: debServerSlug,
+      });
+      setReports(data);
+      setLoadingReports(false);
     };
+    setLoadingReports(true);
     fetchData();
   }, [debGuildName, debRegion, debServerSlug]);
 
@@ -85,7 +47,6 @@ export const FindReports = () => {
           withAsterisk
           label="Guild Name"
           placeholder="Your Guild"
-          rightSection={isLoading && <Loader size="xs" />}
           {...form.getInputProps("guildName")}
         />
         <Space h="sm" />
@@ -104,24 +65,25 @@ export const FindReports = () => {
           withAsterisk
           {...form.getInputProps("serverSlug")}
         />
-        <Space h="sm" />
       </form>
       <Space h="sm" />
-
-      <Flex justify="flex-end">
-        {isValidSelection ? (
+      {loadingReports && <TableSkeleton />}
+      {reports.length > 0 && (
+        <>
+          <ReportsTable reports={reports} />
           <Link
             href={{
-              pathname: `/${debRegion}/${debServerSlug}/${debGuildName}`,
+              pathname: `/${debRegion}/${debServerSlug}/${debGuildName.replaceAll(
+                " ",
+                "%20"
+              )}`,
               query: {},
             }}
           >
-            <Button>Generate Data</Button>
+            Generate Data
           </Link>
-        ) : (
-          <Button disabled>Generate Data</Button>
-        )}
-      </Flex>
+        </>
+      )}
     </>
   );
 };
